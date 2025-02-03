@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  chromadb:
+    image: ghcr.io/chroma-core/chroma:latest
+    container_name: chromadb
+    ports:
+      - "8000:8000"
+    restart: always
+
+  app:
+    build: .
+    container_name: streamlit_app
+    ports:
+      - "8501:8501"
+    depends_on:
+      - chromadb
+    environment:
+      - CHROMADB_HOST=http://chromadb:8000

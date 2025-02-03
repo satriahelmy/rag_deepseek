@@ -6,6 +6,7 @@ from langchain.embeddings import OllamaEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 import ollama
 import os
+from chromadb import HttpClient
 
 # Konfigurasi halaman
 st.set_page_config(page_title="RAG dengan DeepSeek-R1:1.5B", layout="wide")
@@ -52,8 +53,10 @@ def process_document(file):
     # Gunakan Ollama untuk membuat embedding
     embedding_function = OllamaEmbeddings(model="deepseek-r1:1.5b")
 
-    # Simpan ke ChromaDB
-    vectorstore = Chroma.from_texts(texts, embedding_function)
+    # Hubungkan ke ChromaDB dalam Docker
+    chroma_client = HttpClient(host="chromadb", port=8000)
+
+    vectorstore = Chroma.from_texts(texts, embedding_function, client=chroma_client)
 
     st.success(f"✅ Dokumen '{file.name}' berhasil diproses dan diindeks!")
 
